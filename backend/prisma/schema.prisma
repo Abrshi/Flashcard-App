@@ -19,9 +19,7 @@ enum AccountStatus {
 
 model User {
   user_id          Int             @id @default(autoincrement())
-  first_name       String
-  father_name      String?
-  grandfather_name String?
+  name             String
 
   email            String?         @unique
   password_hash    String
@@ -32,10 +30,22 @@ model User {
 
   created_at       DateTime        @default(now())
   updated_at       DateTime        @updatedAt
+  
+  sessions      Session[]
 
   @@map("Users")
 }
+model Session {
+  session_id   Int      @id @default(autoincrement())
+  user_id      Int
+  refreshToken String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
 
+  user User @relation(fields: [user_id], references: [user_id])
+
+  @@map("Sessions")
+}
 model Subject {
   subject_id   Int        @id @default(autoincrement())
   name         String     @unique

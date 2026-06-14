@@ -1,10 +1,11 @@
 import React from 'react'
-import FlashcardApp from './components/FlashcardApp'
+import FlashcardApp from '../components/FlashcardApp'
+import LoginPage from '@/components/auth/Login'
 
 function page() {
   return (
     <div>
-      <FlashcardApp/>
+      <LoginPage/>
       </div>
   )
 }

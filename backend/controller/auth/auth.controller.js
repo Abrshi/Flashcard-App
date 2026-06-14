@@ -39,13 +39,12 @@ const refreshCookieOptions = {
 // ---------------- SignUp ----------------
 export const signUp = async (req, res) => {
   const {
-    first_name,
-    father_name,
-    grandfather_name,
+    name,
     email,
     password,
     phone_number,
   } = req.body;
+  console.log("SignUp Request Body:", name, email, password, phone_number);
 
   try {
     const existing = await prisma.user.findUnique({
@@ -57,35 +56,22 @@ export const signUp = async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 12);
 
-    const defaultRole = await prisma.role.findUnique({
-      where: { role: "user" },
-    });
-
-    if (!defaultRole)
-      return res.status(500).json({ error: "Default role not found" });
-
+    
     const user = await prisma.user.create({
       data: {
-        first_name,
-        father_name,
-        grandfather_name,
+        name,
         email,
         phone_number,
         password_hash: passwordHash,
-        role: {
-          connect: { role_id: defaultRole.role_id },
-        },
-      },
-      include: { role: true },
+       
+      }
     });
 
     res.status(201).json({
       message: "User created",
       user: {
         id: user.user_id,
-        first_name: user.first_name,
-        father_name: user.father_name,
-        grandfather_name: user.grandfather_name,
+        name: user.name,
         email: user.email,
         phone_number: user.phone_number,
         role: user.role.role,
@@ -99,65 +85,62 @@ export const signUp = async (req, res) => {
 
 // ---------------- SignIn ----------------
 export const signIn = async (req, res) => {
-  const { phone_number, password } = req.body;
+  const { email, password } = req.body;
 
   try {
     const user = await prisma.user.findUnique({
-      where: { phone_number },
+      where: { email },
     });
 
-    if (!user)
+    if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
 
-    if (!isMatch)
+    if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
+    }
 
     // delete old sessions
     await prisma.session.deleteMany({
       where: { user_id: user.user_id },
     });
 
+    // create refresh token
     const refreshToken = generateRefreshToken();
     const hashedRefreshToken = hashToken(refreshToken);
 
     await prisma.session.create({
       data: {
         refreshToken: hashedRefreshToken,
-        user: {
-          connect: { user_id: user.user_id },
-        },
+        user_id: user.user_id,
       },
     });
 
-    const role = await prisma.role.findUnique({
-      where: { role_id: user.role_id },
-    });
-
+    // FIXED: role usage
     const accessToken = generateAccessToken({
       user_id: user.user_id,
-      role: role.role,
+      role: user.role,
     });
 
     console.log("Generated Access Token:", accessToken);
 
-    res
+    return res
       .cookie("accessToken", accessToken, accessCookieOptions)
       .cookie("refreshToken", refreshToken, refreshCookieOptions)
       .json({
         message: "Logged in",
         user: {
           id: user.user_id,
-          first_name: user.first_name,
-          father_name: user.father_name,
+          name: user.name,
           email: user.email,
-          role: role.role,
+          role: user.role,
         },
       });
   } catch (err) {
     console.error("SignIn Error:", err);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
