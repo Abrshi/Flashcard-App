@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+model User {
+  user_id          Int             @id @default(autoincrement())
+  first_name       String
+  father_name      String?
+  grandfather_name String?
+
+  email            String?         @unique
+  password_hash    String
+  phone_number     String          @unique
+
+  role             Role            @default(STUDENT)
+  account_status   AccountStatus   @default(ACTIVE)
+
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
+
+  @@map("Users")
+}
+
+model Subject {
+  subject_id   Int        @id @default(autoincrement())
+  name         String     @unique
+  description  String?
+
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+
+  // relation
+  questions    Question[]
+
+  @@map("Subjects")
+}
+
+model Question {
+  question_id  Int        @id @default(autoincrement())
+
+  question     String
+  answer       String
+
+  // relation
+  subject_id   Int
+  subject      Subject   @relation(fields: [subject_id], references: [subject_id], onDelete: Cascade)
+
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  @@map("Questions")
+}
