@@ -63,7 +63,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* LEFT SIDE */}
-      <div className="relative hidden lg:flex flex-col justify-between p-12 bg-gradient-hero text-white overflow-hidden">
+      <div className="relative hidden lg:flex flex-col justify-between p-12 bg-gradient-hero text-white overflow-hidden ml-40">
         <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
         <div className="absolute bottom-0 -left-32 h-80 w-80 rounded-full bg-white/5 blur-3xl" />
 
@@ -194,7 +194,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 rounded-lg bg-gradient-hero text-white font-medium hover:opacity-95 transition disabled:opacity-50"
+          className="w-full rounded-2xl bg-primary px-5 py-3 font-semibold text-primary-foreground transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
             >
               {signup ? "Create Account" : "Sign In"}
             </button>
