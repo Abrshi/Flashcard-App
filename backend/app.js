@@ -6,8 +6,11 @@ import axios from "axios";
 
 import authRouter from "./routes/auth/auth.route.js";
 // admin routes
+import adminRouter from"./routes/admin/admin.route.js";
 
 // user routes
+
+import userRouter from "./routes/user/user.route.js";
 
 dotenv.config();
 const app = express();
@@ -32,7 +35,8 @@ app.use(express.json());
 
 // comen 
 app.use("/api/v1/auth", authRouter);
-
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/admin", adminRouter);
 
 app.get("/", (req, res) => {
   res.send({ message: "Shop API is running..." });
