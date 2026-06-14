@@ -163,7 +163,7 @@ export default function LoginPage() {
                   type="email"
                   name="email"
                   id="email"
-                  placeholder="you@shop.et"
+                  placeholder="you@flashcard.et"
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full h-11 rounded-lg border pl-10 pr-4 outline-none focus:ring-2 focus:ring-slate-700"
@@ -226,7 +226,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-xs text-gray-500">
-            <Link href="/">← Back to dashboard</Link>
+            <Link href="/">Back to dashboard</Link>
           </p>
 
         </div>

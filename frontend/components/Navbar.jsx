@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 export default function Navbar() {
-  const [firstName, setFirstName] = useState("User");
+  const [firstName, setFirstName] = useState("There");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
